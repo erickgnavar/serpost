@@ -1,8 +1,11 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-from datetime import datetime
 import sys
+from datetime import datetime
+
 from bs4 import BeautifulSoup
+
 
 if sys.version_info >= (3, 0):
     from urllib.request import urlopen

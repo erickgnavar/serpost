@@ -1,7 +1,9 @@
-# coding: utf=8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import sys
-from .serpost import query_tracking_code, DATE_FORMAT
+
+from .serpost import DATE_FORMAT, query_tracking_code
 
 
 def format_data(data, code):

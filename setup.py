@@ -6,7 +6,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='serpost',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(),
     include_package_data=True,
     license='MIT License',
@@ -28,6 +28,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Topic :: Utilities',
     ],
+    test_suite='tests',
     install_requires=[
         'beautifulsoup4',
         'lxml'

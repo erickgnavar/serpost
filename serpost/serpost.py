@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
 from datetime import datetime
+import logging
+import sys
 
 from bs4 import BeautifulSoup
 
@@ -14,8 +15,15 @@ else:
     from urllib2 import urlopen
     from urllib import urlencode
 
+
+logger = logging.getLogger(__name__)
+logging.basicConfig()
+
+
 url = 'http://clientes.serpost.com.pe/prj_tracking/seguimientolinea.aspx'
-DATE_FORMAT = '%d/%m/%Y %H:%M'
+
+DATE_FORMAT_1 = '%d/%m/%Y %I:%M'
+DATE_FORMAT_2 = '%d/%m/%Y %H:%M'
 
 
 def prepare_payload():
@@ -26,6 +34,18 @@ def prepare_payload():
     for input_tag in form.find_all('input'):
         data[input_tag['name']] = input_tag.get('value')
     return data
+
+
+def format_date(date_str):
+    if 'a.m.' in date_str or 'p.m.' in date_str:
+        date_str = date_str.strip()[:16]
+        return datetime.strptime(date_str, DATE_FORMAT_1)
+    elif '-' in date_str:
+        date_str = date_str.replace('-', '')
+        return datetime.strptime(date_str, DATE_FORMAT_2)
+    else:
+        logger.warn('Format not found for: %s', date_str)
+        return None
 
 
 def query_tracking_code(tracking_code):
@@ -41,9 +61,10 @@ def query_tracking_code(tracking_code):
         tds = tr.find_all('td')
         if not tds or len(tds) != 2:
             continue
-        cleaned_date = tds[0].text.strip()[:16]
-        result.append({
-            'date': datetime.strptime(cleaned_date, DATE_FORMAT),
-            'message': tds[1].text
-        })
+        date_object = format_date(tds[0].text)
+        if date_object is not None:
+            result.append({
+                'date': date_object,
+                'message': tds[1].text
+            })
     return sorted(result, key=lambda x: x['date'])

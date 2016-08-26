@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 
 import sys
 
-from .serpost import DATE_FORMAT, query_tracking_code
+from .serpost import query_tracking_code
+
+DATE_FORMAT = '%d/%m/%Y %H:%M'
 
 
 def format_data(data, code):

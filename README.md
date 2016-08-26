@@ -1,4 +1,5 @@
 # Serpost CLI
+[![Build Status](https://travis-ci.org/erickgnavar/serpost.svg?branch=master)](https://travis-ci.org/erickgnavar/serpost)
 
 CLI tool for search tracking number in SERPOST page
 

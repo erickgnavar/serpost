@@ -22,9 +22,9 @@ def _make_request(url, payload):
         'Content-Type': 'application/json',
     }
     req = Request(url, headers=headers)
-    data = json.dumps(payload).encode('utf8')
+    data = json.dumps(payload).encode('utf-8')
     response = urlopen(req, data=data)
-    return json.loads(response.read())
+    return json.loads(response.read().decode('utf-8'))
 
 
 def _process_detail(raw):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
+import argparse
 
 from .serpost import query_tracking_code
 
@@ -22,8 +22,13 @@ def format_data(data, code):
 
 
 def main():
-    for code in sys.argv[1:]:
-        format_data(query_tracking_code(code), code)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('tracking_codes', help='Comma separated tracking codes: eg ABC123,ABC321', type=str)
+    parser.add_argument('--year', help='Package year, if this argument is not provided the current year will be taken', type=int)
+    args = parser.parse_args()
+
+    for code in args.tracking_codes.split(','):
+        format_data(query_tracking_code(code, year=args.year), code)
 
 
 if __name__ == '__main__':

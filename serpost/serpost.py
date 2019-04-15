@@ -5,8 +5,6 @@ import json
 import sys
 from datetime import datetime
 
-from bs4 import BeautifulSoup
-
 if sys.version_info >= (3, 0):
     from urllib.request import urlopen, Request
 else:
@@ -14,7 +12,7 @@ else:
 
 
 TRACKING_URL = 'http://clientes.serpost.com.pe/prj_online/Web_Busqueda.aspx/Consultar_Tracking'
-TRACKING_DETAIL_URL = 'http://clientes.serpost.com.pe/prj_online/Web_Busqueda.aspx/Consultar_Tracking_Detalle'
+TRACKING_DETAIL_URL = 'http://clientes.serpost.com.pe/prj_online/Web_Busqueda.aspx/Consultar_Tracking_Detalle_IPS'
 
 
 def _make_request(url, payload):
@@ -27,33 +25,24 @@ def _make_request(url, payload):
     return json.loads(response.read().decode('utf-8'))
 
 
-def _process_detail(raw):
-    soup = BeautifulSoup(raw, 'lxml')
-    rows = []
-    for row in soup.find_all('tr'):
-        cells = []
-        for td in row.find_all('td'):
-            cells.append(td.text.strip())
-        rows.append(cells)
-
+def _process_detail(data):
     res = []
-    for row in rows:
-        place, date_str, message = row
-        data = datetime.strptime(date_str, '%d/%m/%Y')
+    for record in data:
+        date = datetime.strptime(record['RetornoCadena3'].strip(), '%d/%m/%Y')
         res.append({
-            'date': data,
-            'message': message,
-            'place': place,
+            'place': record['RetornoCadena2'].strip(),
+            'date': date,
+            'message': record['RetornoCadena4'].strip(),
         })
     return sorted(res, key=lambda x: x['date'])
 
 
-def query_tracking_code(tracking_code):
+def query_tracking_code(tracking_code, year=None):
     """
     Given a tracking_code return a list of events related the tracking code
     """
     payload = {
-        'Anio': datetime.now().year,
+        'Anio': year or datetime.now().year,
         'Tracking': tracking_code,
     }
     response = _make_request(TRACKING_URL, payload)
@@ -69,4 +58,4 @@ def query_tracking_code(tracking_code):
     })
 
     response = _make_request(TRACKING_DETAIL_URL, payload)
-    return _process_detail(response['d']['ResulQuery'])
+    return _process_detail(response['d'])

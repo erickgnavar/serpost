@@ -13,8 +13,11 @@ pip install serpost
 
 ```
 serpost-cli {tracking-code-1}
-serpost-cli {tracking-code-1} {tracking-code-2}
+serpost-cli {tracking-code-1},{tracking-code-2}
+serpost-cli {tracking-code-1},{tracking-code-2} --year=2019
 ```
+
+Execute `serpost-cli --help` for more info about the available arguments.
 
 #### Example
 
